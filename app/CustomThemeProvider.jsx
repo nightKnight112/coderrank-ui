@@ -22,6 +22,9 @@ export const CustomThemeProvider = ({ children }) => {
             },
             success: {
                 main: '#26a269',
+            },
+            error: {
+                main: "#c01c28"
             }
         }
     })
@@ -42,6 +45,9 @@ export const CustomThemeProvider = ({ children }) => {
             },
             success: {
                 main: "#26a269",
+            },
+            error: {
+                main: "#c01c28"
             }
         }
     })

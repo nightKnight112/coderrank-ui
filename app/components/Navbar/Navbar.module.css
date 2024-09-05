@@ -1,7 +1,10 @@
 .navbar {
+    position: sticky;
+    top: 0px;
+    z-index: 9;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 6vh;
+    height: 5vh;
     padding: 20px;
 }

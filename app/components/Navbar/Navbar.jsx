@@ -15,10 +15,10 @@ const Navbar = () => {
     }
 
     return (
-        <Box className={styles.navbar} sx={{ bgcolor: "primary.main" }}>
-            <Typography variant="h4" sx={{ fontWeight: "bold" }}>CoderRank</Typography>
+        <Box className={styles.navbar} bgcolor={"primary.main"}>
+            <Typography variant="h4" sx={{ fontWeight: "900", color: "white" }}>CoderRank</Typography>
             <Box onClick={toggleTheme}>
-                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+                {mode === "light" ? <DarkModeIcon sx={{ color: "white" }} /> : <LightModeIcon sx={{ color: "white" }} />}
             </Box>
         </Box>
     )

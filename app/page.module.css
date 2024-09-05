@@ -1,32 +1,36 @@
 .main_container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 30px;
     padding: 20px;
-    min-height: calc(100vh - (6vh + 80px));
+}
+
+.question {
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
 }
 
 .content {
+    min-width: 300px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    flex-wrap: wrap;
     gap: 20px;
+    flex: 2;
 }
 
 .editor {
     height: 60vh;
-    min-width: 350px;
-    width: 60%;
+    width: 100%;
     border: 2px solid grey;
 }
-
 
 .input_output_container {
     display: flex;
     flex-direction: column;
-    min-width: 350px;
-    width: 30%;
-    padding: 10px;
     gap: 20px;
 }
 
