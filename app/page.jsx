@@ -23,7 +23,7 @@ const page = () => {
 			code: code,
 			input: input
 		}
-		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, data, {
+		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/execute`, data, {
 			headers: {
 				"Content-Type": "application/json"
 			}
@@ -97,6 +97,11 @@ const page = () => {
 						/>
 					</Box>
 
+					<Box className={styles.btn_container}>
+						<Button variant="contained" className={styles.run_btn} onClick={runCode}>Run</Button>
+						<Button variant="contained" className={styles.submit_btn} color='success'>Submit</Button>
+					</Box>
+
 					<Box className={styles.input_output_container}>
 						<TextField
 							sx={{
@@ -123,11 +128,6 @@ const page = () => {
 							readOnly
 							rows={5}
 						></TextField>
-
-						<Box className={styles.btn_container}>
-							<Button variant="contained" className={styles.run_btn} onClick={runCode}>Run</Button>
-							<Button variant="contained" className={styles.submit_btn} color='success'>Submit</Button>
-						</Box>
 					</Box>
 				</Box>
 
