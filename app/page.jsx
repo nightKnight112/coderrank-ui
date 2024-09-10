@@ -1,9 +1,9 @@
 "use client";
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react';
 import styles from "./page.module.css"
 import axios from 'axios';
-import { Alert, Backdrop, Box, Button, CircularProgress, Divider, Snackbar, TextField, Typography } from '@mui/material';
+import { Alert, Backdrop, Box, Button, CircularProgress, MenuItem, Select, Snackbar, TextField, Typography } from '@mui/material';
 import { ModeContext } from './CustomThemeProvider';
 
 const page = () => {
@@ -12,6 +12,8 @@ const page = () => {
 	const [output, setOutput] = useState("");
 	const [loaderOpen, setLoaderOpen] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [languageId, setLanguageId] = useState("");
+	const [languageOptions, setLanguageOptions] = useState([]);
 
 	const handleCodeChange = (value, event) => {
 		setCode(value);
@@ -23,7 +25,7 @@ const page = () => {
 			code: code,
 			input: input
 		}
-		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/execute`, data, {
+		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, data, {
 			headers: {
 				"Content-Type": "application/json"
 			}
@@ -38,6 +40,14 @@ const page = () => {
 	}
 
 	const { mode, setMode } = useContext(ModeContext);
+
+	useEffect(() => {
+		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/get-language-options`)
+			.then((res) => {
+				setLanguageOptions(res?.data);
+				setLanguageId(res?.data[0]?.language_id);
+			})
+	}, [])
 
 	return (
 		<>
@@ -55,12 +65,14 @@ const page = () => {
 					Something went wrong!
 				</Alert>
 			</Snackbar>
+
 			<Backdrop
 				sx={(theme) => ({ color: 'primary.main', zIndex: theme.zIndex.drawer + 1 })}
 				open={loaderOpen}
 			>
 				<CircularProgress color="inherit" />
 			</Backdrop>
+
 			<Box className={styles.main_container} sx={{ bgcolor: "background", color: "textColor" }}>
 				<Box className={styles.question}>
 					<Box>
@@ -83,10 +95,33 @@ const page = () => {
 				</Box>
 
 				<Box className={styles.content}>
+					<Box className={styles.language_selector}>
+						<Select
+							size="small"
+							value={languageId}
+							onChange={(e) => setLanguageId(e.target.value)}
+							sx={{ width: "100px" }}
+							inputProps={{
+								MenuProps: {
+									MenuListProps: {
+										sx: {
+											backgroundColor: 'background'
+										}
+									}
+								}
+							}}
+						>
+							{languageOptions?.map((r, i) => {
+								return (
+									<MenuItem value={r?.language_id}>{r?.language_name}</MenuItem>
+								)
+							})}
+						</Select>
+					</Box>
 					<Box className={styles.editor}>
+						{console.log(languageOptions.filter((language) => language?.language_id === languageId)[0]?.language_name)}
 						<Editor
-							defaultLanguage="java"
-							defaultValue="// some comment"
+							language={languageOptions.filter((language) => language?.language_id === languageId)[0]?.language_name.toLowerCase()}
 							theme={mode === "light" ? "vs-light" : "vs-dark"}
 							onChange={handleCodeChange}
 							options={{
