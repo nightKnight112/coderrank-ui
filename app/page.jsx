@@ -26,7 +26,8 @@ const page = () => {
 		setLoaderOpen(true);
 		let data = {
 			code: code,
-			input: input
+			input: input,
+			language_name: languageName
 		}
 		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, data, {
 			headers: {
@@ -91,7 +92,7 @@ const page = () => {
 						<Select
 							size="small"
 							value={languageName}
-							onChange={(e) => setLanguageId(e.target.value)}
+							onChange={(e) => setLanguageName(e.target.value)}
 							sx={{ width: "100px" }}
 							inputProps={{
 								MenuProps: {
