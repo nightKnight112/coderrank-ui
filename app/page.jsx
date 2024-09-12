@@ -5,6 +5,9 @@ import styles from "./page.module.css"
 import axios from 'axios';
 import { Alert, Backdrop, Box, Button, CircularProgress, MenuItem, Select, Snackbar, TextField, Typography } from '@mui/material';
 import { ModeContext } from './CustomThemeProvider';
+import BackupIcon from '@mui/icons-material/Backup';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 const page = () => {
 	const [code, setCode] = useState("");
@@ -73,29 +76,18 @@ const page = () => {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 
-			<Box className={styles.main_container} sx={{ bgcolor: "background", color: "textColor" }}>
-				<Box className={styles.question}>
-					<Box>
-						<Typography variant="h5" sx={{ fontWeight: "bold" }}>Problem 1</Typography>
-						<Typography>Write a program to print sum of 2 numbers.</Typography>
+			<Box className={styles.main_container} bgcolor="background" color="textColor">
+				<Box className={styles.toolbar} bgcolor="toolbarBackground">
+					<Box className={styles.question_navigation_container}>
+						<Button sx={{ minWidth: "5px", padding: "0px" }} title='Previous'>
+							<ChevronLeft />
+						</Button>
+						<Button sx={{ minWidth: "5px", padding: "0px" }} title='Next'>
+							<ChevronRight />
+						</Button>
 					</Box>
 
-					<Box>
-						<Typography variant="h5" sx={{ fontWeight: "bold" }}>Sample Input</Typography>
-						<Typography sx={{ whiteSpace: "pre-wrap" }}>
-							{`5\n10`}
-						</Typography>
-					</Box>
-
-					<Box>
-						<Typography variant="h5" sx={{ fontWeight: "bold" }}>Sample Output</Typography>
-						<Typography>15</Typography>
-					</Box>
-
-				</Box>
-
-				<Box className={styles.content}>
-					<Box className={styles.language_selector}>
+					<Box className={styles.language_select_btn_container}>
 						<Select
 							size="small"
 							value={languageId}
@@ -117,56 +109,85 @@ const page = () => {
 								)
 							})}
 						</Select>
-					</Box>
-					<Box className={styles.editor}>
-						{console.log(languageOptions.filter((language) => language?.language_id === languageId)[0]?.language_name)}
-						<Editor
-							language={languageOptions.filter((language) => language?.language_id === languageId)[0]?.language_name.toLowerCase()}
-							theme={mode === "light" ? "vs-light" : "vs-dark"}
-							onChange={handleCodeChange}
-							options={{
-								fontFamily: "monospace",
-								fontLigatures: "true",
-								minimap: { enabled: false }
-							}}
-						/>
-					</Box>
 
-					<Box className={styles.btn_container}>
-						<Button variant="contained" className={styles.run_btn} onClick={runCode}>Run</Button>
-						<Button variant="contained" className={styles.submit_btn} color='success'>Submit</Button>
-					</Box>
-
-					<Box className={styles.input_output_container}>
-						<TextField
-							sx={{
-								'& .MuiInputBase-input': {
-									fontFamily: "Fira Code, monospace"
-								}
-							}}
-							multiline
-							placeholder='Input'
-							value={input}
-							onChange={(e) => setInput(e.target.value)}
-							rows={5}
-						></TextField>
-
-						<TextField
-							sx={{
-								'& .MuiInputBase-input': {
-									fontFamily: "Fira Code, monospace"
-								}
-							}}
-							multiline
-							placeholder='Output'
-							value={output}
-							readOnly
-							rows={5}
-						></TextField>
+						<Button variant="contained" className={styles.run_btn} onClick={runCode} title="Run">
+							<PlayArrowIcon></PlayArrowIcon>
+						</Button>
+						<Button variant="contained" className={styles.submit_btn} color='success' title="Submit">
+							<BackupIcon></BackupIcon>
+						</Button>
 					</Box>
 				</Box>
 
-			</Box>
+				<Box className={styles.question_content_container}>
+					<Box className={styles.question}>
+						<Box>
+							<Typography variant="h5" sx={{ fontWeight: "bold" }}>Problem 1</Typography>
+							<Typography>Write a program to print sum of 2 numbers.</Typography>
+						</Box>
+
+						<Box>
+							<Typography variant="h5" sx={{ fontWeight: "bold" }}>Sample Input</Typography>
+							<Typography sx={{ whiteSpace: "pre-wrap" }}>
+								{`5\n10`}
+							</Typography>
+						</Box>
+
+						<Box>
+							<Typography variant="h5" sx={{ fontWeight: "bold" }}>Sample Output</Typography>
+							<Typography>15</Typography>
+						</Box>
+
+					</Box>
+
+					<Box className={styles.content}>
+						<Box className={styles.editor}>
+							<Editor
+								language={languageOptions.filter((language) => language?.language_id === languageId)[0]?.language_name.toLowerCase()}
+								theme={mode === "light" ? "vs-light" : "vs-dark"}
+								onChange={handleCodeChange}
+								options={{
+									fontFamily: "monospace",
+									fontLigatures: "true",
+									minimap: { enabled: false },
+									fontSize: "14px"
+								}}
+							/>
+						</Box>
+
+						<Box className={styles.input_output_container}>
+							<TextField
+								sx={{
+									'& .MuiInputBase-input': {
+										fontFamily: "Fira Code, monospace"
+									},
+									flex: 1
+								}}
+								multiline
+								placeholder='Input'
+								value={input}
+								onChange={(e) => setInput(e.target.value)}
+								rows={5}
+							></TextField>
+
+							<TextField
+								sx={{
+									'& .MuiInputBase-input': {
+										fontFamily: "Fira Code, monospace"
+									},
+									flex: 1
+								}}
+								multiline
+								placeholder='Output'
+								value={output}
+								readOnly
+								rows={5}
+							></TextField>
+						</Box>
+					</Box>
+				</Box>
+
+			</Box >
 		</>
 	)
 }
