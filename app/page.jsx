@@ -15,7 +15,7 @@ const page = () => {
 	const [output, setOutput] = useState("");
 	const [loaderOpen, setLoaderOpen] = useState(false);
 	const [open, setOpen] = useState(false);
-	const [languageId, setLanguageId] = useState("");
+	const [languageName, setLanguageName] = useState("");
 	const [languageOptions, setLanguageOptions] = useState([]);
 
 	const handleCodeChange = (value, event) => {
@@ -48,7 +48,7 @@ const page = () => {
 		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/get-language-options`)
 			.then((res) => {
 				setLanguageOptions(res?.data);
-				setLanguageId(res?.data[0]?.language_id);
+				setLanguageName(res?.data[0]?.language_name);
 			})
 	}, [])
 
@@ -90,7 +90,7 @@ const page = () => {
 					<Box className={styles.language_select_btn_container}>
 						<Select
 							size="small"
-							value={languageId}
+							value={languageName}
 							onChange={(e) => setLanguageId(e.target.value)}
 							sx={{ width: "100px" }}
 							inputProps={{
@@ -105,7 +105,7 @@ const page = () => {
 						>
 							{languageOptions?.map((r, i) => {
 								return (
-									<MenuItem value={r?.language_id}>{r?.language_name}</MenuItem>
+									<MenuItem value={r?.language_name}>{r?.language_name}</MenuItem>
 								)
 							})}
 						</Select>
@@ -143,7 +143,7 @@ const page = () => {
 					<Box className={styles.content}>
 						<Box className={styles.editor}>
 							<Editor
-								language={languageOptions.filter((language) => language?.language_id === languageId)[0]?.language_name.toLowerCase()}
+								language={languageName.toLowerCase()}
 								theme={mode === "light" ? "vs-light" : "vs-dark"}
 								onChange={handleCodeChange}
 								options={{
