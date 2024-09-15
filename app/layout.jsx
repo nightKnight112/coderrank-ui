@@ -1,7 +1,4 @@
-import { ThemeProvider } from "@mui/material";
-import Navbar from "./components/Navbar/Navbar";
 import "./globals.css";
-import { CustomThemeProvider } from "./CustomThemeProvider";
 
 export const metadata = {
 	title: "CoderRank",
@@ -10,12 +7,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang="en">
+		<html>
 			<body>
-				<CustomThemeProvider>
-					<Navbar></Navbar>
-					{children}
-				</CustomThemeProvider>
+                {children}
 			</body>
 		</html>
 	);

@@ -1,196 +1,168 @@
-"use client";
-import React, { useContext, useEffect, useState } from 'react'
-import Editor from '@monaco-editor/react';
-import styles from "./page.module.css"
-import axios from 'axios';
-import { Alert, Backdrop, Box, Button, CircularProgress, MenuItem, Select, Snackbar, TextField, Typography } from '@mui/material';
-import { ModeContext } from './CustomThemeProvider';
-import BackupIcon from '@mui/icons-material/Backup';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+"use client"
+import { motion } from "framer-motion";
+import Image from "next/image";
+import styles from "./page.module.css";
+import Typewriter from 'typewriter-effect';
+import { Box, TextField } from "@mui/material";
+import { useState } from "react";
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const page = () => {
-	const [code, setCode] = useState("");
-	const [input, setInput] = useState("");
-	const [output, setOutput] = useState("");
-	const [loaderOpen, setLoaderOpen] = useState(false);
-	const [open, setOpen] = useState(false);
-	const [languageName, setLanguageName] = useState("");
-	const [languageOptions, setLanguageOptions] = useState([]);
 
-	const handleCodeChange = (value, event) => {
-		setCode(value);
-	}
+    const [isLogin, setIsLogin] = useState(true);
 
-	const runCode = () => {
-		setLoaderOpen(true);
-		let data = {
-			code: code,
-			input: input,
-			language_name: languageName
-		}
-		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, data, {
-			headers: {
-				"Content-Type": "application/json"
-			}
-		}).then((res) => {
-			setOutput(res?.data);
-			setLoaderOpen(false);
-		})
-			.catch((err) => {
-				setLoaderOpen(false);
-				setOpen(true);
-			})
-	}
+    return(
+        <>
+            <div className={styles.container}>
+            {/* Hero Section */}
+            <section className={styles.hero}>
+            <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+                className={styles.heroText}
+            >
+                <h1>CoderRank</h1>
+                <h1>
+                    <Typewriter
+                    options={{
+                        strings: ['Code for a Brighter Tommorow', 'Create new and innovative solutions', 'Collaborate on different platforms'],
+                        autoStart: true,
+                        loop: true,
+                        deleteSpeed: 10,
+                    }}
+                    />
+                </h1>
+                <p>
+                Learn to code, solve real-world problems, and join a global
+                community.
+                </p>
+            </motion.div>
 
-	const { mode, setMode } = useContext(ModeContext);
+            {/* Coding Animation */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2 }}
+                className={styles.codeAnimation}
+            >
+                {isLogin?
+                    <>
+                        <div className={styles.loginContainer}>
+                            <h2 className={styles.heading}>Login</h2>
+                            <form className={styles.form}>
+                                <input type="email" placeholder="Email" className={styles.input} />
+                                <input type="password" placeholder="Password" className={styles.input} />
+                                <button className={styles.loginButton}>Login</button>
+                            </form>
+                            <div className={styles.socialLogin}>
+                                <p>Or login with</p>
+                                <div className={styles.socialButtons}>
+                                    <button className={styles.googleButton}><GoogleIcon/></button>
+                                    <button className={styles.facebookButton}><FacebookIcon /></button>
+                                    <button className={styles.githubButton}><GitHubIcon /></button>
+                                </div>
+                            </div>
+                            <p className={styles.signUpText}>
+                                Don’t have an account? <a className={styles.signUpLink} onClick={(e)=>{setIsLogin(false)}}>Sign Up</a>
+                            </p>
+                        </div>
+                    </>:<>
+                        <div className={styles.loginContainer}>
+                            <h2 className={styles.heading}>Sign Up</h2>
+                            <form className={styles.form}>
+                                <input placeholder="Name" className={styles.input} />
+                                <input type="number" placeholder="Phone Number" className={styles.input} />
+                                <input type="email" placeholder="Email" className={styles.input} />
+                                <input type="password" placeholder="Password" className={styles.input} />
+                                <input type="password" placeholder="Confirm Password" className={styles.input} />
+                                <button className={styles.loginButton}>Sign Up</button>
+                            </form>
+                            <div className={styles.socialLogin}>
+                                <p>Or Sign Up with</p>
+                                <div className={styles.socialButtons}>
+                                    <button className={styles.googleButton}><GoogleIcon/></button>
+                                    <button className={styles.facebookButton}><FacebookIcon /></button>
+                                    <button className={styles.githubButton}><GitHubIcon /></button>
+                                </div>
+                            </div>
+                            <p className={styles.signUpText}>
+                                Already have an account? <a href="#" className={styles.signUpLink} onClick={(e)=>{setIsLogin(true)}}>Login</a>
+                            </p>
+                        </div>
+                    </>}
+            </motion.div>
+            </section>
 
-	useEffect(() => {
-		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/get-language-options`)
-			.then((res) => {
-				setLanguageOptions(res?.data);
-				setLanguageName(res?.data[0]?.language_name);
-			})
-	}, [])
+            {/* About Us Section */}
+            <section className={styles.about}>
+            <motion.div
+                initial={{ x: "-100vw" }}
+                animate={{ x: 0 }}
+                transition={{ type: "spring", stiffness: 50 }}
+            >
+                <h2>Salient Features</h2>
+                <p>For beginners to pros, we've got everything you need to grow.</p>
+                <div className={styles.cardsAbout}>
+                    <motion.div
+                    className={styles.card}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    >
+                        <h3>Highly Modular</h3>
+                        <p>Customize the platform according to your needs.</p>
+                    </motion.div>
 
-	return (
-		<>
-			<Snackbar
-				open={open}
-				autoHideDuration={3000}
-				onClose={() => setOpen(false)}
-				anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-			>
-				<Alert
-					severity="error"
-					variant="filled"
-					sx={{ width: '100%' }}
-				>
-					Something went wrong!
-				</Alert>
-			</Snackbar>
+                    <motion.div
+                    className={styles.card}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    >
+                        <h3>Vast Language Support</h3>
+                        <p>Supports all major programming languages, with a future scope to add more</p>
+                    </motion.div>
 
-			<Backdrop
-				sx={(theme) => ({ color: 'primary.main', zIndex: theme.zIndex.drawer + 1 })}
-				open={loaderOpen}
-			>
-				<CircularProgress color="inherit" />
-			</Backdrop>
+                    <motion.div
+                    className={styles.card}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    >
+                        <h3>Open-Source</h3>
+                        <p>For all the developers out there, tinker as you like</p>
+                    </motion.div>
+            </div>
+            </motion.div>
+            </section>
 
-			<Box className={styles.main_container} bgcolor="background" color="textColor">
-				<Box className={styles.toolbar} bgcolor="toolbarBackground">
-					<Box className={styles.question_navigation_container}>
-						<Button sx={{ minWidth: "5px", padding: "0px" }} title='Previous'>
-							<ChevronLeft />
-						</Button>
-						<Button sx={{ minWidth: "5px", padding: "0px" }} title='Next'>
-							<ChevronRight />
-						</Button>
-					</Box>
+            {/* Courses Section */}
+            <section id="courses" className={styles.courses}>
+            <h2>Supported Languages</h2>
+            <div className={styles.cards}>
+                <motion.div
+                className={styles.card}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                >
+                <h3>Java</h3>
+                <p>Java is a versatile, object-oriented programming language designed for cross-platform compatibility and high performance.</p>
+                </motion.div>
 
-					<Box className={styles.language_select_btn_container}>
-						<Select
-							size="small"
-							value={languageName}
-							onChange={(e) => setLanguageName(e.target.value)}
-							sx={{ width: "100px" }}
-							inputProps={{
-								MenuProps: {
-									MenuListProps: {
-										sx: {
-											backgroundColor: 'background'
-										}
-									}
-								}
-							}}
-						>
-							{languageOptions?.map((r, i) => {
-								return (
-									<MenuItem value={r?.language_name}>{r?.language_name}</MenuItem>
-								)
-							})}
-						</Select>
+                <motion.div
+                className={styles.card}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                >
+                <h3>Python</h3>
+                <p>Python is a dynamic, high-level programming language known for its simplicity, readability, and versatility in various domains.</p>
+                </motion.div>
+            </div>
+            </section>
+        </div>
+        </>
+    )
 
-						<Button variant="contained" className={styles.run_btn} onClick={runCode} title="Run">
-							<PlayArrowIcon></PlayArrowIcon>
-						</Button>
-						<Button variant="contained" className={styles.submit_btn} color='success' title="Submit">
-							<BackupIcon></BackupIcon>
-						</Button>
-					</Box>
-				</Box>
-
-				<Box className={styles.question_content_container}>
-					<Box className={styles.question}>
-						<Box>
-							<Typography variant="h5" sx={{ fontWeight: "bold" }}>Problem 1</Typography>
-							<Typography>Write a program to print sum of 2 numbers.</Typography>
-						</Box>
-
-						<Box>
-							<Typography variant="h5" sx={{ fontWeight: "bold" }}>Sample Input</Typography>
-							<Typography sx={{ whiteSpace: "pre-wrap" }}>
-								{`5\n10`}
-							</Typography>
-						</Box>
-
-						<Box>
-							<Typography variant="h5" sx={{ fontWeight: "bold" }}>Sample Output</Typography>
-							<Typography>15</Typography>
-						</Box>
-
-					</Box>
-
-					<Box className={styles.content}>
-						<Box className={styles.editor}>
-							<Editor
-								language={languageName.toLowerCase()}
-								theme={mode === "light" ? "vs-light" : "vs-dark"}
-								onChange={handleCodeChange}
-								options={{
-									fontFamily: "monospace",
-									fontLigatures: "true",
-									minimap: { enabled: false },
-									fontSize: "14px"
-								}}
-							/>
-						</Box>
-
-						<Box className={styles.input_output_container}>
-							<TextField
-								sx={{
-									'& .MuiInputBase-input': {
-										fontFamily: "Fira Code, monospace"
-									},
-									flex: 1
-								}}
-								multiline
-								placeholder='Input'
-								value={input}
-								onChange={(e) => setInput(e.target.value)}
-								rows={5}
-							></TextField>
-
-							<TextField
-								sx={{
-									'& .MuiInputBase-input': {
-										fontFamily: "Fira Code, monospace"
-									},
-									flex: 1
-								}}
-								multiline
-								placeholder='Output'
-								value={output}
-								readOnly
-								rows={5}
-							></TextField>
-						</Box>
-					</Box>
-				</Box>
-
-			</Box >
-		</>
-	)
 }
 
-export default page
+export default page;
