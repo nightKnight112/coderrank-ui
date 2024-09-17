@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import styles from "./page.module.css";
 import Typewriter from 'typewriter-effect';
-import { Alert, Box, TextField } from "@mui/material";
+import { Alert, Box, Button, Snackbar, TextField } from "@mui/material";
 import { useState } from "react";
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -11,6 +11,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import { userLogin, userRegistration } from "@/utils/apiFile";
 import { useRef } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const page = () => {
 
@@ -20,17 +21,17 @@ const page = () => {
     const [displaySuccess, setDisplaySuccess] = useState(false);
     const [displayError, setDisplayError] = useState(false);
     const formRef = useRef()
-    // const router = useRouter()
+    const router = useRouter()
 
     function onLoginClick(){
         let reqBody = {
             "user_alias" : username,
             "password" : password
         }
-        console.log(isLogin);
-        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login-user`, reqBody).then((res)=>{
-            console.log(res.status);
-        })
+        const loggedIn = userLogin(reqBody) 
+        if(loggedIn){
+            router.push('/home/code')
+        }
     }
 
     const onRegistrationClick = () => {
@@ -42,8 +43,9 @@ const page = () => {
             "phone_no" : formData.elements['phone_no'].value,
             "email" : formData.elements['email'].value
             }
+        
         console.log(reqBody);
-        let isRegistrationSuccessful = userRegistration(reqBody);
+        const isRegistrationSuccessful = userRegistration(reqBody);
         if(isRegistrationSuccessful){
             // alert('Successfully Registered User, Please Login')
             setDisplaySuccess(true)
@@ -51,18 +53,36 @@ const page = () => {
             // alert('Registration Failed, Please Try Again')
             setDisplayError(true)
         }
+        formData.reset()
     }
 
     return(
         <>
             <div className={styles.container}>
             {/* Hero Section */}
-            {(displaySuccess)?<Alert variant="filled" severity="success">
+            {displaySuccess && (
+            <Snackbar
+            open={displaySuccess}
+            autoHideDuration={3000}
+            onClose={(e) => setDisplaySuccess(false)}
+            >
+            <Alert variant="filled" severity="success">
                 User Registration Successful, please continue to login
-            </Alert>:<></>}
-            {(displayError)?<Alert variant="filled" severity="error">
+            </Alert>
+            </Snackbar>
+            )}
+
+            {displayError && (
+            <Snackbar
+            open={displayError}
+            autoHideDuration={3000}
+            onClose={(e) => setDisplayError(false)}
+            >
+            <Alert variant="filled" severity="error">
                 User Registration Unsuccessful, please try again or contact your admin
-            </Alert>:<></>}
+            </Alert>
+            </Snackbar>
+            )}
             <section className={styles.hero}>
             <motion.div
                 initial={{ opacity: 0, y: -50 }}
@@ -101,7 +121,7 @@ const page = () => {
                             <form className={styles.form}>
                                 <input placeholder="Username" className={styles.input}  onChange={(e)=>{setUsername(e.target.value)}}  />
                                 <input type="password" placeholder="Password" className={styles.input} onChange={(e)=>{setPassword(e.target.value)}} />
-                                <button className={styles.loginButton} onClick={onLoginClick}>Login</button>
+                                <Button className={styles.loginButton} onClick={onLoginClick}>Login</Button>
                             </form>
                             <div className={styles.socialLogin}>
                                 <p>Or login with</p>
@@ -125,7 +145,7 @@ const page = () => {
                                 <input type="email" placeholder="Email" className={styles.input} name="email" />
                                 <input type="password" placeholder="Password" className={styles.input} name="user_password" />
                                 <input type="password" placeholder="Confirm Password" className={styles.input} />
-                                <button className={styles.loginButton} onClick={onRegistrationClick}>Sign Up</button>
+                                <Button className={styles.loginButton} onClick={onRegistrationClick}>Sign Up</Button>
                             </form>
                             <div className={styles.socialLogin}>
                                 <p>Or Sign Up with</p>
@@ -136,7 +156,7 @@ const page = () => {
                                 </div>
                             </div>
                             <p className={styles.signUpText}>
-                                Already have an account? <a href="#" className={styles.signUpLink} onClick={(e)=>{setIsLogin(true)}}>Login</a>
+                                Already have an account? <a className={styles.signUpLink} onClick={(e)=>{setIsLogin(true)}}>Login</a>
                             </p>
                         </div>
                     </>}
