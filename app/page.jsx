@@ -3,20 +3,66 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import styles from "./page.module.css";
 import Typewriter from 'typewriter-effect';
-import { Box, TextField } from "@mui/material";
+import { Alert, Box, TextField } from "@mui/material";
 import { useState } from "react";
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { userLogin, userRegistration } from "@/utils/apiFile";
+import { useRef } from "react";
+import axios from "axios";
 
 const page = () => {
 
     const [isLogin, setIsLogin] = useState(true);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [displaySuccess, setDisplaySuccess] = useState(false);
+    const [displayError, setDisplayError] = useState(false);
+    const formRef = useRef()
+    // const router = useRouter()
+
+    function onLoginClick(){
+        let reqBody = {
+            "user_alias" : username,
+            "password" : password
+        }
+        console.log(isLogin);
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login-user`, reqBody).then((res)=>{
+            console.log(res.status);
+        })
+    }
+
+    const onRegistrationClick = () => {
+        const formData = formRef.current
+        const reqBody = {
+            "full_name" : formData.elements['full_name'].value,
+            "user_alias" : formData.elements['user_alias'].value,
+            "user_password" : formData.elements['user_password'].value,
+            "phone_no" : formData.elements['phone_no'].value,
+            "email" : formData.elements['email'].value
+            }
+        console.log(reqBody);
+        let isRegistrationSuccessful = userRegistration(reqBody);
+        if(isRegistrationSuccessful){
+            // alert('Successfully Registered User, Please Login')
+            setDisplaySuccess(true)
+        }else{
+            // alert('Registration Failed, Please Try Again')
+            setDisplayError(true)
+        }
+    }
 
     return(
         <>
             <div className={styles.container}>
             {/* Hero Section */}
+            {(displaySuccess)?<Alert variant="filled" severity="success">
+                User Registration Successful, please continue to login
+            </Alert>:<></>}
+            {(displayError)?<Alert variant="filled" severity="error">
+                User Registration Unsuccessful, please try again or contact your admin
+            </Alert>:<></>}
             <section className={styles.hero}>
             <motion.div
                 initial={{ opacity: 0, y: -50 }}
@@ -53,9 +99,9 @@ const page = () => {
                         <div className={styles.loginContainer}>
                             <h2 className={styles.heading}>Login</h2>
                             <form className={styles.form}>
-                                <input type="email" placeholder="Email" className={styles.input} />
-                                <input type="password" placeholder="Password" className={styles.input} />
-                                <button className={styles.loginButton}>Login</button>
+                                <input placeholder="Username" className={styles.input}  onChange={(e)=>{setUsername(e.target.value)}}  />
+                                <input type="password" placeholder="Password" className={styles.input} onChange={(e)=>{setPassword(e.target.value)}} />
+                                <button className={styles.loginButton} onClick={onLoginClick}>Login</button>
                             </form>
                             <div className={styles.socialLogin}>
                                 <p>Or login with</p>
@@ -72,13 +118,14 @@ const page = () => {
                     </>:<>
                         <div className={styles.loginContainer}>
                             <h2 className={styles.heading}>Sign Up</h2>
-                            <form className={styles.form}>
-                                <input placeholder="Name" className={styles.input} />
-                                <input type="number" placeholder="Phone Number" className={styles.input} />
-                                <input type="email" placeholder="Email" className={styles.input} />
-                                <input type="password" placeholder="Password" className={styles.input} />
+                            <form className={styles.form} ref={formRef}>
+                                <input placeholder="Name" className={styles.input} name="full_name" />
+                                <input placeholder="Username" className={styles.input} name="user_alias" />
+                                <input type="number" placeholder="Phone Number" className={styles.input} name="phone_no" />
+                                <input type="email" placeholder="Email" className={styles.input} name="email" />
+                                <input type="password" placeholder="Password" className={styles.input} name="user_password" />
                                 <input type="password" placeholder="Confirm Password" className={styles.input} />
-                                <button className={styles.loginButton}>Sign Up</button>
+                                <button className={styles.loginButton} onClick={onRegistrationClick}>Sign Up</button>
                             </form>
                             <div className={styles.socialLogin}>
                                 <p>Or Sign Up with</p>
