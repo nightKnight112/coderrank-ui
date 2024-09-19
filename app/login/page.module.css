@@ -1,0 +1,94 @@
+.codeAnimation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a5fb4, #c01c28);
+    padding: 0px 20px;
+}
+
+.loginContainer {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    /* Blur effect for modern look */
+    color: white;
+    width: 350px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    outline: none;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+}
+
+.input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.loginButton {
+    background: #4CAF50;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.loginButton:hover {
+    background: #45a049;
+}
+
+.socialButtons button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    /* padding: 10px; */
+    border-radius: 6px;
+    color: white;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.googleButton {
+    background: #db4437;
+}
+
+.facebookButton {
+    background: #3b5998;
+}
+
+.githubButton {
+    background: #333;
+}
+
+.socialButtons button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.signUpLink {
+    color: #26a269;
+    text-decoration: none;
+}
+
+.signUpLink:hover {
+    text-decoration: underline;
+}

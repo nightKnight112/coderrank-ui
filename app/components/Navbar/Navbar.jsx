@@ -15,7 +15,7 @@ const Navbar = () => {
     }
 
     return (
-        <Box className={styles.navbar} bgcolor={"primary.main"}>
+        <Box className={styles.navbar}>
             <Typography variant="h4" sx={{ fontWeight: "900", color: "white" }}>CoderRank</Typography>
             <Box onClick={toggleTheme}>
                 {mode === "light" ? <DarkModeIcon sx={{ color: "white" }} /> : <LightModeIcon sx={{ color: "white" }} />}
