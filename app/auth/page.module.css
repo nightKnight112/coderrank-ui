@@ -1,0 +1,8 @@
+.codeAnimation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a5fb4, #c01c28);
+    padding: 0px 20px;
+}

@@ -30,7 +30,7 @@ const page = () => {
 
                         <Box className={styles.btn_container}>
                             <Button variant="contained" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={() => router.push("/home/code")}>Try Now</Button>
-                            <Button variant="contained" color="success" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={(() => router.push("/login"))}>Login</Button>
+                            <Button variant="contained" color="success" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={(() => router.push("/auth"))}>Login</Button>
                         </Box>
                     </Box>
 
