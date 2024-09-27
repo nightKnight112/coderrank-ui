@@ -9,15 +9,24 @@ export const api = axios.create({
     }
 });
 
-api.interceptors.response.use(response => response, error => {
-    if (error?.response?.status === 401) {
-        api.post("/renew-token", {
-            headers: {
-                withCredentials: true
-            }
-        }).then((res) => {
-            api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`
-        })
+api.interceptors.response.use(response => response, async (error) => {
+    const originalRequest = error.config;
+    if (error?.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+            const res = await api.post("/renew-token", {
+                headers: {
+                    withCredentials: true
+                }
+            })
+            api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
+            originalRequest.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
+
+            return api(originalRequest);
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
     }
     else {
         return Promise.reject(error);

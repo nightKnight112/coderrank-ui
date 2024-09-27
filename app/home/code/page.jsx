@@ -145,7 +145,7 @@ const page = () => {
 					<Box className={styles.content}>
 						<Box className={styles.editor}>
 							<Editor
-								language={languageName.toLowerCase()}
+								language={languageName?.toLowerCase()}
 								theme={mode === "light" ? "vs-light" : "vs-dark"}
 								onChange={handleCodeChange}
 								options={{
