@@ -8,6 +8,7 @@ import { ModeContext } from '../../CustomThemeProvider';
 import BackupIcon from '@mui/icons-material/Backup';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { api } from '@/utils/apiFile';
 
 const page = () => {
 	const [code, setCode] = useState("");
@@ -29,7 +30,7 @@ const page = () => {
 			input: input,
 			language_name: languageName
 		}
-		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, data, {
+		api.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, data, {
 			headers: {
 				"Content-Type": "application/json"
 			}
@@ -46,7 +47,7 @@ const page = () => {
 	const { mode, setMode } = useContext(ModeContext);
 
 	useEffect(() => {
-		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/get-language-options`)
+		api.get(`${process.env.NEXT_PUBLIC_API_URL}/get-language-options`)
 			.then((res) => {
 				setLanguageOptions(res?.data);
 				setLanguageName(res?.data[0]?.language_name);

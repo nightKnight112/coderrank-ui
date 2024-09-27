@@ -1,30 +1,32 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
-import React, { useRef } from 'react'
+import React, { useContext, useRef } from 'react'
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { api } from '@/utils/apiFile';
 import { useRouter } from 'next/navigation';
 import styles from "./Login.module.css";
+import axios from 'axios';
 
 const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
     const formRef = useRef();
 
     const router = useRouter();
 
-    function onLoginClick() {
+    const onLoginClick = () => {
         const formData = formRef.current;
         let reqBody = {
             "user_alias": formData.elements["user_alias"].value,
             "password": formData.elements["password"].value
         }
 
-        api.post("/login-user", reqBody, {
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login-user`, reqBody, {
             withCredentials: true
         }).then((res) => {
             let date = new Date();
             date.setMonth(date.getMonth() + 1);
             document.cookie = `isLoggedIn=true; expires=${date}`;
+            api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
             router.push("/home/code");
         })
             .catch((err) => {
