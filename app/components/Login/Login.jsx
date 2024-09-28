@@ -24,8 +24,8 @@ const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
             withCredentials: true
         }).then((res) => {
             let date = new Date();
-            date.setMonth(date.getMonth() + 1);
-            document.cookie = `isLoggedIn=true; expires=${date}`;
+            date.setMinutes(date.getMinutes() + 1);
+            document.cookie = `isLoggedIn=true; expires=${date.toUTCString}`;
             api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
             router.push("/home/code");
         })
