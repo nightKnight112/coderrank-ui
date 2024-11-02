@@ -1,11 +1,11 @@
 "use client";
-import { Alert, Box, Snackbar } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { Alert, Box, Snackbar } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
-import SignUp from '../components/SignUp/SignUp';
-import Login from '../components/Login/Login';
-import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation';
+import SignUp from "../components/SignUp/SignUp";
+import Login from "../components/Login/Login";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const page = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -15,11 +15,6 @@ const page = () => {
 
     const router = useRouter();
 
-    useEffect(() => {
-        if (Cookies.get("isLoggedIn"))
-            router.push("/home/code")
-    }, [])
-
     return (
         <>
             <Snackbar
@@ -27,29 +22,32 @@ const page = () => {
                 autoHideDuration={3000}
                 onClose={(e) => setOpen(false)}
             >
-                <Alert variant="filled" severity={isError === true ? "error" : "success"}>
+                <Alert
+                    variant="filled"
+                    severity={isError === true ? "error" : "success"}
+                >
                     {message}
                 </Alert>
             </Snackbar>
 
             <Box className={styles.codeAnimation}>
-                {isLogin ?
+                {isLogin ? (
                     <Login
                         setIsError={setIsError}
                         setMessage={setMessage}
                         setOpen={setOpen}
                         setIsLogin={setIsLogin}
                     />
-                    :
+                ) : (
                     <SignUp
                         setIsError={setIsError}
                         setMessage={setMessage}
                         setOpen={setOpen}
                         setIsLogin={setIsLogin}
                     />
-                }
+                )}
             </Box>
         </>
-    )
-}
-export default page
+    );
+};
+export default page;

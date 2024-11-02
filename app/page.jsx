@@ -4,9 +4,18 @@ import styles from "./page.module.css";
 import Typewriter from 'typewriter-effect';
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
 
 const page = () => {
     const router = useRouter()
+    
+    const handleLoginClick = () => {
+    	if (Cookies.get("isLoggedIn"))
+            router.push("/home/code");
+        else
+        	router.push("/auth");
+    }
+    
     return (
         <>
             <Box className={styles.container}>
@@ -30,7 +39,7 @@ const page = () => {
 
                         <Box className={styles.btn_container}>
                             <Button variant="contained" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={() => router.push("/home/code")}>Try Now</Button>
-                            <Button variant="contained" color="success" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={(() => router.push("/auth"))}>Login</Button>
+                            <Button variant="contained" color="success" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={handleLoginClick}>Login</Button>
                         </Box>
                     </Box>
 

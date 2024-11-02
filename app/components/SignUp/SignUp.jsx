@@ -28,7 +28,7 @@ const SignUp = ({ setIsLogin, setIsError, setMessage, setOpen }) => {
             setIsLogin(true);
         })
             .catch((err) => {
-                setIsError(false);
+                setIsError(true);
                 setMessage(err?.response?.data?.message);
                 setOpen(true);
             })
@@ -38,7 +38,11 @@ const SignUp = ({ setIsLogin, setIsError, setMessage, setOpen }) => {
         <>
             <Box className={styles.loginContainer}>
                 <Typography variant="h5" className={styles.heading}>Sign Up</Typography>
-                <form className={styles.form} ref={formRef}>
+                <form className={styles.form} ref={formRef} onKeyUp={(e) => {
+                    if (e.key === "Enter")
+                        onRegistrationClick();
+                }
+                }>
                     <TextField size="small" placeholder="Name" name="full_name" sx={{
 
                         '& .MuiOutlinedInput-root': {

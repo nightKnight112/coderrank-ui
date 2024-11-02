@@ -9,6 +9,7 @@ import BackupIcon from '@mui/icons-material/Backup';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { api } from '@/utils/apiFile';
+import Cookies from 'js-cookie';
 
 const page = () => {
 	const [code, setCode] = useState("");
@@ -18,6 +19,12 @@ const page = () => {
 	const [open, setOpen] = useState(false);
 	const [languageName, setLanguageName] = useState("");
 	const [languageOptions, setLanguageOptions] = useState([]);
+	const [enableSubmit, setEnableSubmit] = useState(false);
+
+	useEffect(() => {
+		if (Cookies.get("isLoggedIn"))
+			setEnableSubmit(true);
+	}, [])
 
 	const handleCodeChange = (value, event) => {
 		setCode(value);
@@ -115,7 +122,7 @@ const page = () => {
 						<Button variant="contained" className={styles.run_btn} onClick={runCode} title="Run">
 							<PlayArrowIcon></PlayArrowIcon>
 						</Button>
-						<Button variant="contained" className={styles.submit_btn} color='success' title="Submit">
+						<Button variant="contained" className={styles.submit_btn} color='success' disabled={!enableSubmit} title="Submit">
 							<BackupIcon></BackupIcon>
 						</Button>
 					</Box>

@@ -36,7 +36,11 @@ const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
     return (
         <Box className={styles.loginContainer}>
             <Typography variant="h5" className={styles.heading}>Login</Typography>
-            <form className={styles.form} ref={formRef}>
+            <form className={styles.form} ref={formRef} onKeyUp={(e) => {
+                if (e.key === "Enter")
+                    onLoginClick();
+            }
+            }>
                 <TextField size="small" placeholder="Username" name="user_alias" sx={{
                     '& .MuiOutlinedInput-root': {
                         borderRadius: '6px',
