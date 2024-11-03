@@ -7,6 +7,7 @@ import { api } from '@/utils/apiFile';
 import { useRouter } from 'next/navigation';
 import styles from "./Login.module.css";
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
     const formRef = useRef();
@@ -24,6 +25,7 @@ const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
             withCredentials: true
         }).then((res) => {
             api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
+            Cookies.set("isLoggedIn", "true", { expires: 1 / 48 });
             router.push("/home/code");
         })
             .catch((err) => {
