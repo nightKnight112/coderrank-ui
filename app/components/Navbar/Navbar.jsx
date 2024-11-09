@@ -8,6 +8,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import { api } from '@/utils/apiFile';
 import Cookies from 'js-cookie';
 import { AccountCircle, Logout } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
 
@@ -16,6 +17,8 @@ const Navbar = () => {
     const [displayAvatar, setDisplayAvatar] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
+    const router = useRouter();
 
     const toggleTheme = () => {
         setMode(mode === "light" ? "dark" : "light");
@@ -49,6 +52,17 @@ const Navbar = () => {
         };
     }
 
+    const logout = () => {
+        api.post("/logout").then((res) => {
+            Cookies.remove("isLoggedIn");
+            router.push("/");
+        })
+            .catch((err) => {
+                Cookies.remove("isLoggedIn");
+                router.push("/");
+            })
+    }
+
     return (
         <>
             <Menu
@@ -66,7 +80,7 @@ const Navbar = () => {
                     <AccountCircle />
                     <Typography>Profile</Typography>
                 </MenuItem>
-                <MenuItem onClick={() => setAnchorEl(null)} sx={{ display: "flex", gap: "10px" }}>
+                <MenuItem onClick={() => logout()} sx={{ display: "flex", gap: "10px" }}>
                     <Logout />
                     <Typography>Logout</Typography>
                 </MenuItem>

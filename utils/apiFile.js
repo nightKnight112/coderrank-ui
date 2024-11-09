@@ -18,14 +18,14 @@ api.interceptors.response.use(response => response, async (error) => {
         try {
             const res = await api.post("/renew-token")
             api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
-            originalRequest._retry = false;
+            // originalRequest._retry = false;
             return api(originalRequest);
         }
         catch (error) {
             return Promise.reject(error);
         }
     }
-    else if (error?.response?.status === 401 && originalRequest.url === "/renew-token") {
+    else if ((error?.response?.status === 401 || error?.response?.status === 422) && originalRequest.url === "/renew-token") {
         Cookies.remove("isLoggedIn");
         window.location.replace("/");
     }
