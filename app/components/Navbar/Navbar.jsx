@@ -55,12 +55,17 @@ const Navbar = () => {
     }
 
     const stringAvatar = (name) => {
+        let initials = name?.toUpperCase()?.split(' ');
+        if (initials?.length === 1)
+            initials = initials[0]?.slice(0, 2);
+        else if (initials?.length > 1)
+            initials = initials[0][0] + initials[initials.length - 1][0];
         return {
             sx: {
                 "&:hover": { cursor: "pointer" },
                 bgcolor: randomColor(name),
             },
-            children: `${name?.split(' ')[0][0]}${name?.split(' ')[1][0]}`,
+            children: initials,
         };
     }
 

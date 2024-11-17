@@ -31,9 +31,11 @@ const CustomDataGrid = ({ data, columns }) => {
                 }
             })
             setRows(results);
+            setPage(1);
         }
         else {
             setRows([...data]);
+            setPage(1);
         }
     }
 
@@ -84,7 +86,7 @@ const CustomDataGrid = ({ data, columns }) => {
                             <MenuItem value={"default"}>Enter column name</MenuItem>
                             {columns?.map((r, i) => {
                                 return (
-                                    <MenuItem value={r}>{r}</MenuItem>
+                                    <MenuItem key={i} value={r}>{r}</MenuItem>
                                 )
                             })}
                         </Select>
@@ -131,7 +133,7 @@ const CustomDataGrid = ({ data, columns }) => {
                     </TableHead>
 
                     <TableBody>
-                        {rows?.slice((page - 1) * 10, (page - 1) * 10 + 10)?.map((row, i) => (
+                        {rows?.slice((page - 1) * 5, (page - 1) * 5 + 5)?.map((row, i) => (
                             <TableRow
                                 key={i}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
