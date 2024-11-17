@@ -26,7 +26,11 @@ const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
         }).then((res) => {
             api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
             Cookies.set("isLoggedIn", "true", { expires: 1 / 48 });
-            router.push("/home/code");
+
+            if (res?.data?.admin_user)
+                router.push("/home/admin/all-users")
+            else
+                router.push("/home/code");
         })
             .catch((err) => {
                 setMessage(err?.response?.data?.message);

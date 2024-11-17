@@ -21,11 +21,6 @@ const page = () => {
 	const [languageOptions, setLanguageOptions] = useState([]);
 	const [enableSubmit, setEnableSubmit] = useState(false);
 
-	useEffect(() => {
-		if (Cookies.get("isLoggedIn"))
-			setEnableSubmit(true);
-	}, [])
-
 	const handleCodeChange = (value, event) => {
 		setCode(value);
 	}
@@ -54,10 +49,16 @@ const page = () => {
 	const { mode, setMode } = useContext(ModeContext);
 
 	useEffect(() => {
+		if (Cookies.get("isLoggedIn"))
+			setEnableSubmit(true);
+
 		api.get(`${process.env.NEXT_PUBLIC_API_URL}/get-language-options`)
 			.then((res) => {
 				setLanguageOptions(res?.data);
 				setLanguageName(res?.data[0]?.language_name);
+			})
+			.catch((err) => {
+				setOpen(true);
 			})
 	}, [])
 
