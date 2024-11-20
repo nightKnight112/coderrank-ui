@@ -8,30 +8,64 @@ import { api } from '@/utils/apiFile';
 const SignUp = ({ setIsLogin, setIsError, setMessage, setOpen }) => {
     const formRef = useRef();
 
-    const onRegistrationClick = () => {
-        const formData = formRef.current
-        const reqBody = {
-            "full_name": formData.elements['full_name'].value,
-            "user_alias": formData.elements['user_alias'].value,
-            "user_password": formData.elements['user_password'].value,
-            "phone_no": formData.elements['phone_no'].value,
-            "email": formData.elements['email'].value
+    const isValid = (formData) => {
+        for (let i of formData) {
+            if (i.value === "") {
+                console.log(i)
+                return { "status": false, "errorMessage": "Please fill up all the required fields" };
+            }
         }
 
-        console.log(reqBody);
+        const { phone_no, email, user_password, confirm_password } = formData;
 
-        api.post("/register-user", reqBody).then((res) => {
-            setIsError(false);
-            setMessage(res?.data?.message);
+        if (phone_no.value.length !== 10) {
+            return { "status": false, "errorMessage": "Invalid phone number" };
+        }
+
+        if (!email.value.toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            )) {
+            return { "status": false, "errorMessage": "Invalid email" }
+        }
+
+        if (user_password.value !== confirm_password.value)
+            return { "status": false, "errorMessage": "Passwords not matching" }
+
+        return { "status": true, "errorMessage": "" }
+
+    }
+
+    const onRegistrationClick = () => {
+        const formData = formRef.current.elements;
+        const { status, errorMessage } = isValid(formData);
+        if (!status) {
+            setIsError(true);
+            setMessage(errorMessage);
             setOpen(true);
-            formData.reset()
-            setIsLogin(true);
-        })
-            .catch((err) => {
-                setIsError(true);
-                setMessage(err?.response?.data?.message);
+        }
+        else {
+            const reqBody = {
+                "full_name": formData['full_name'].value,
+                "user_alias": formData['user_alias'].value,
+                "user_password": formData['user_password'].value,
+                "phone_no": formData['phone_no'].value,
+                "email": formData['email'].value
+            }
+
+            api.post("/register-user", reqBody).then((res) => {
+                setIsError(false);
+                setMessage(res?.data?.message);
                 setOpen(true);
+                formRef.current.reset();
+                setIsLogin(true);
             })
+                .catch((err) => {
+                    setIsError(true);
+                    setMessage(err?.response?.data?.message);
+                    setOpen(true);
+                })
+        }
     }
 
     return (
@@ -113,7 +147,7 @@ const SignUp = ({ setIsLogin, setIsError, setMessage, setOpen }) => {
                             backgroundColor: 'rgba(255, 255, 255, 0.2)',
                         },
                     }} />
-                    <TextField size="small" type="password" placeholder="Confirm Password" sx={{
+                    <TextField size="small" type="password" placeholder="Confirm Password" name="confirm_password" sx={{
 
                         '& .MuiOutlinedInput-root': {
                             borderRadius: '6px',
@@ -127,7 +161,7 @@ const SignUp = ({ setIsLogin, setIsError, setMessage, setOpen }) => {
                             backgroundColor: 'rgba(255, 255, 255, 0.2)',
                         },
                     }} />
-                    <Button variant="contained" color="success" onClick={onRegistrationClick}>Sign Up</Button>
+                    <Button value="submit" variant="contained" color="success" onClick={onRegistrationClick}>Sign Up</Button>
                 </form>
                 <Box className={styles.socialLogin}>
                     <Typography>Or Sign Up with</Typography>
