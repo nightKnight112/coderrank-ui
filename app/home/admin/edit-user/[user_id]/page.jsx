@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import styles from "./page.module.css";
 import { api } from '@/utils/apiFile';
+import { Delete, Save } from '@mui/icons-material';
 
 const page = () => {
     const params = useParams();
@@ -22,11 +23,16 @@ const page = () => {
 
     useEffect(() => {
         api.get(`/user-details-list/${user_id}`).then((res) => {
-            setFullName(res?.data?.user_metadata?.full_name);
-            setPhoneNo(res?.data?.user_metadata?.phone_no);
-            setEmail(res?.data?.user_metadata?.email);
-            setIsAdmin(res?.data?.user_metadata?.is_admin.toLowerCase() === 'true');
+            setFullName(res?.data?.full_name);
+            setPhoneNo(res?.data?.phone_no);
+            setEmail(res?.data?.email);
+            setIsAdmin(res?.data?.is_admin.toLowerCase() === 'true');
         })
+            .catch((err) => {
+                setAlertOpen(true);
+                setMessage(err?.response?.data?.message);
+                setSeverity("error");
+            })
     }, [])
 
     const handleEdit = () => {
@@ -49,6 +55,31 @@ const page = () => {
                 setAlertOpen(true);
                 setMessage(err?.response?.data?.message);
                 setSeverity("error");
+            })
+    }
+
+    const handleDelete = () => {
+        api.delete("/delete-user", {
+            data: {
+                user_to_be_deleted: user_id
+            }
+        })
+            .then((res) => {
+                setAlertOpen(true);
+                setMessage(res?.data?.message);
+                setSeverity("success");
+                if (res?.data?.self_delete === "true") {
+                    Cookies.remove("isLoggedIn");
+                    setTimeout(() => router.push("/"), 3000)
+                }
+                else {
+                    setTimeout(() => router.back(), 3000);
+                }
+            })
+            .catch((err) => {
+                setAlertOpen(true);
+                setSeverity("error");
+                setMessage(err?.response?.data?.message);
             })
     }
 
@@ -94,8 +125,14 @@ const page = () => {
                 </Box>
 
                 <Box className={styles.btn_container}>
-                    <Button variant="contained" sx={{ backgroundColor: "error.main" }} onClick={() => router.back()}>Cancel</Button>
-                    <Button variant="contained" sx={{ backgroundColor: "primary.main" }} onClick={handleEdit}>Save</Button>
+                    <Button variant="contained" sx={{ backgroundColor: "primary.main", display: "flex", gap: "10px", width: "120px" }} onClick={handleEdit}>
+                        <Typography>Save</Typography>
+                        <Save />
+                    </Button>
+                    <Button variant="contained" sx={{ backgroundColor: "error.main", display: "flex", gap: "10px", width: "120px" }} onClick={handleDelete}>
+                        <Typography>Delete</Typography>
+                        <Delete />
+                    </Button>
                 </Box>
             </Box>
         </>

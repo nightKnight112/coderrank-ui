@@ -133,6 +133,7 @@ const CustomDataGrid = ({ data, columns }) => {
                     </TableHead>
 
                     <TableBody>
+                        {console.log(data)}
                         {rows?.slice((page - 1) * 5, (page - 1) * 5 + 5)?.map((row, i) => (
                             <TableRow
                                 key={i}
