@@ -35,27 +35,48 @@ const page = () => {
             })
     }, [])
 
+    const isValid = () => {
+        if (phoneNo.length !== 10)
+            return { "status": false, "errorMessage": "Invalid phone number" };
+
+        if (!email.toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            ))
+            return { "status": false, "errorMessage": "Invalid email" }
+
+        return { "status": true, "errorMessage": "" }
+    }
+
     const handleEdit = () => {
-        api.put("/edit-user", {
-            user_to_be_edited: user_id,
-            edit_metadata: {
-                full_name: fullName,
-                phone_no: phoneNo,
-                is_admin: isAdmin,
-                email: email
-            }
-        })
-            .then((res) => {
-                setAlertOpen(true);
-                setMessage(res?.data?.message);
-                setSeverity("success");
-                setTimeout(() => router.back(), 3000);
+        const { status, errorMessage } = isValid();
+        if (status) {
+            api.put("/edit-user", {
+                user_to_be_edited: user_id,
+                edit_metadata: {
+                    full_name: fullName,
+                    phone_no: phoneNo,
+                    is_admin: isAdmin,
+                    email: email
+                }
             })
-            .catch((err) => {
-                setAlertOpen(true);
-                setMessage(err?.response?.data?.message);
-                setSeverity("error");
-            })
+                .then((res) => {
+                    setAlertOpen(true);
+                    setMessage(res?.data?.message);
+                    setSeverity("success");
+                    setTimeout(() => router.back(), 3000);
+                })
+                .catch((err) => {
+                    setAlertOpen(true);
+                    setMessage(err?.response?.data?.message);
+                    setSeverity("error");
+                })
+        }
+        else {
+            setAlertOpen(true);
+            setMessage(errorMessage);
+            setSeverity("error");
+        }
     }
 
     const handleDelete = () => {
@@ -102,36 +123,36 @@ const page = () => {
             <Box className={styles.main_container} sx={{ backgroundColor: "background", color: "textColor" }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold" }}>Edit User</Typography>
 
-                <Box className={styles.details_container}>
+                <Box className={styles.details_container} sx={{ backgroundColor: "secondaryBackground" }}>
                     <Box>
-                        <Typography>Fullname</Typography>
-                        <TextField size='small' value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                        <Typography sx={{ fontWeight: "bold" }}>Fullname</Typography>
+                        <TextField sx={{ width: "100%" }} size='small' value={fullName} onChange={(e) => setFullName(e.target.value)} />
                     </Box>
 
                     <Box>
-                        <Typography>Phone No.</Typography>
-                        <TextField size='small' value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
+                        <Typography sx={{ fontWeight: "bold" }}>Phone No.</Typography>
+                        <TextField sx={{ width: "100%" }} size='small' value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
                     </Box>
 
                     <Box>
-                        <Typography>Email</Typography>
-                        <TextField size='small' value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <Typography sx={{ fontWeight: "bold" }}>Email</Typography>
+                        <TextField sx={{ width: "100%" }} size='small' value={email} onChange={(e) => setEmail(e.target.value)} />
                     </Box>
 
                     <Box>
-                        <Typography>Is Admin?</Typography>
+                        <Typography sx={{ fontWeight: "bold" }}>Is Admin?</Typography>
                         <Switch checked={isAdmin} onChange={() => setIsAdmin(!isAdmin)} />
                     </Box>
                 </Box>
 
                 <Box className={styles.btn_container}>
-                    <Button variant="contained" sx={{ backgroundColor: "primary.main", display: "flex", gap: "10px", width: "120px" }} onClick={handleEdit}>
-                        <Typography>Save</Typography>
+                    <Button variant="contained" sx={{ backgroundColor: "primary.main", fontWeight: "bold" }} onClick={handleEdit}>
                         <Save />
+                        Save
                     </Button>
-                    <Button variant="contained" sx={{ backgroundColor: "error.main", display: "flex", gap: "10px", width: "120px" }} onClick={handleDelete}>
-                        <Typography>Delete</Typography>
+                    <Button variant="contained" sx={{ backgroundColor: "error.main", fontWeight: "bold" }} onClick={handleDelete}>
                         <Delete />
+                        Delete
                     </Button>
                 </Box>
             </Box>

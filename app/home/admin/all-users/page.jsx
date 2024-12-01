@@ -1,5 +1,5 @@
 "use client";
-import { Alert, Box, Snackbar, Typography } from '@mui/material'
+import { Alert, Box, Button, Snackbar, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import styles from "./page.module.css";
 import { api } from '@/utils/apiFile';
@@ -44,7 +44,9 @@ const page = () => {
             problem_solved_count,
             actions: (
                 <>
-                    <EditIcon sx={{ color: "primary.main", "&:hover": { cursor: "pointer" } }} onClick={() => router.push(`/home/admin/edit-user/${user_id}`)} />
+                    <Button variant="contained" onClick={() => router.push(`/home/admin/edit-user/${user_id}`)}>
+                        <EditIcon />
+                    </Button>
                 </>
             )
         };

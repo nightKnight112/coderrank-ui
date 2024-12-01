@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from "./CustomDataGrid.module.css";
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-const CustomDataGrid = ({ data, columns }) => {
+const CustomDataGrid = ({ data, columns, rowsPerPage = 5 }) => {
     const [page, setPage] = useState(1);
     const [rows, setRows] = useState([]);
     const [open, setOpen] = useState(false);
@@ -41,7 +41,7 @@ const CustomDataGrid = ({ data, columns }) => {
 
     const handleSort = () => {
         setOpen(false);
-        if (column !== "default") {
+        if (column !== "default" || column !== "Action") {
             let x = columns.findIndex((y) => y === column);
             let key = Object.keys(rows[0])[x];
 
@@ -70,7 +70,7 @@ const CustomDataGrid = ({ data, columns }) => {
     return (
         <>
             <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogTitle sx={{ backgroundColor: "background" }}>Sort</DialogTitle>
+                <DialogTitle sx={{ backgroundColor: "background", fontWeight: "bold" }}>Sort</DialogTitle>
 
                 <DialogContent sx={{ width: "300px", backgroundColor: "background" }}>
                     <Box className={styles.selection_container}>
@@ -86,7 +86,9 @@ const CustomDataGrid = ({ data, columns }) => {
                             <MenuItem value={"default"}>Enter column name</MenuItem>
                             {columns?.map((r, i) => {
                                 return (
-                                    <MenuItem key={i} value={r}>{r}</MenuItem>
+                                    r !== "Action" ?
+                                        <MenuItem key={i} value={r}>{r}</MenuItem>
+                                        : null
                                 )
                             })}
                         </Select>
@@ -107,8 +109,8 @@ const CustomDataGrid = ({ data, columns }) => {
                 </DialogContent>
 
                 <DialogActions sx={{ backgroundColor: "background", padding: "10px 22px" }}>
-                    <Button variant="contained" sx={{ backgroundColor: "error.main" }} onClick={handleReset}>Reset</Button>
-                    <Button variant="contained" sx={{ backgroundColor: "primary.main" }} onClick={handleSort}>Apply</Button>
+                    <Button variant="contained" sx={{ backgroundColor: "error.main", fontWeight: "bold" }} onClick={handleReset}>Reset</Button>
+                    <Button variant="contained" sx={{ backgroundColor: "primary.main", fontWeight: "bold" }} onClick={handleSort}>Apply</Button>
                 </DialogActions>
             </Dialog>
 
@@ -117,7 +119,7 @@ const CustomDataGrid = ({ data, columns }) => {
                     if (e.key === "Enter")
                         handleSearch();
                 }}></TextField>
-                <Button variant="contained" onClick={() => setOpen(true)}><FilterListIcon /></Button>
+                <Button variant="outlined" onClick={() => setOpen(true)}><FilterListIcon /></Button>
             </Box>
 
             <TableContainer component={Paper}>
@@ -133,11 +135,10 @@ const CustomDataGrid = ({ data, columns }) => {
                     </TableHead>
 
                     <TableBody>
-                        {console.log(data)}
-                        {rows?.slice((page - 1) * 5, (page - 1) * 5 + 5)?.map((row, i) => (
+                        {rows?.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)?.map((row, i) => (
                             <TableRow
                                 key={i}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: i % 2 === 0 ? "background" : "secondaryBackground" }}
                             >
                                 {Object.keys(row)?.map((x, j) => (
                                     <TableCell key={j}>{row[x]}</TableCell>

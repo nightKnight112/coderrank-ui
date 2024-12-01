@@ -93,7 +93,13 @@ const Navbar = () => {
                     }
                 }}
             >
-                <MenuItem onClick={() => setAnchorEl(null)} sx={{ display: "flex", gap: "10px" }}>
+                <MenuItem
+                    onClick={() => {
+                        router.push("/home/profile");
+                        setAnchorEl(null);
+                    }}
+                    sx={{ display: "flex", gap: "10px" }}
+                >
                     <AccountCircle />
                     <Typography>Profile</Typography>
                 </MenuItem>

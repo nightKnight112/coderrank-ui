@@ -28,7 +28,7 @@ const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
             Cookies.set("isLoggedIn", "true", { expires: 1 / 48 });
 
             if (res?.data?.admin_user)
-                router.push("/home/admin/all-users")
+                router.push("/home/admin")
             else
                 router.push("/home/code");
         })

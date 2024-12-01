@@ -14,9 +14,3 @@
     border-radius: 10px;
     padding: 20px;
 }
-
-.btn_container {
-    align-self: flex-end;
-    display: flex;
-    gap: 20px;
-}

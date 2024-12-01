@@ -16,7 +16,7 @@ export const CustomThemeProvider = ({ children }) => {
         palette: {
             mode: "light",
             background: "#fafafa",
-            toolbarBackground: "#f0f0f0",
+            secondaryBackground: "#efefef",
             textColor: "#111111",
             primary: {
                 main: "#1a5fb4",
@@ -40,7 +40,7 @@ export const CustomThemeProvider = ({ children }) => {
         palette: {
             mode: "dark",
             background: "#242424",
-            toolbarBackground: "#3a3a3a",
+            secondaryBackground: "#303030",
             textColor: "#eeeeee",
             primary: {
                 main: "#1a5fb4",

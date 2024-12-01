@@ -86,8 +86,8 @@ const page = () => {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 
-			<Box className={styles.main_container} bgcolor="background" color="textColor">
-				<Box className={styles.toolbar} bgcolor="toolbarBackground">
+			<Box className={styles.main_container} sx={{ backgroundColor: "background", color: "textColor" }}>
+				<Box className={styles.toolbar} sx={{ backgroundColor: "secondaryBackground" }}>
 					<Box className={styles.question_navigation_container}>
 						<Button sx={{ minWidth: "5px", padding: "0px" }} title='Previous'>
 							<ChevronLeft />
