@@ -6,7 +6,13 @@
     min-height: calc(100vh - 80px);
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
 .details_container {
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -16,7 +22,6 @@
 }
 
 .btn_container {
-    align-self: flex-end;
     display: flex;
-    gap: 20px;
+    gap: 10px;
 }

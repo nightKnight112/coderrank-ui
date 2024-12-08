@@ -18,7 +18,7 @@ api.interceptors.response.use(response => response, async (error) => {
         try {
             const res = await api.post("/renew-token")
             api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
-            // originalRequest._retry = false;
+            originalRequest.headers.Authorization = `Bearer ${res?.data?.access_token}`;
             return api(originalRequest);
         }
         catch (error) {

@@ -29,7 +29,7 @@ const page = () => {
             problem_statement_difficulty,
             actions: (
                 <>
-                    <Button variant="contained" onClick={() => router.push(`/home/admin/edit-problems/${problem_statement_uuid}`)}>
+                    <Button variant="contained" onClick={() => router.push(`/home/admin/edit-problem/${problem_statement_uuid}`)}>
                         <EditIcon />
                     </Button>
                 </>

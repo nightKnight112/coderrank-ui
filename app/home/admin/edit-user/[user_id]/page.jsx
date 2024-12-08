@@ -1,10 +1,11 @@
 "use client";
-import { Alert, Box, Button, Snackbar, Switch, TextField, Typography } from '@mui/material';
+import { Alert, Backdrop, Box, Button, CircularProgress, Snackbar, Switch, TextField, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import styles from "./page.module.css";
 import { api } from '@/utils/apiFile';
 import { Delete, Save } from '@mui/icons-material';
+import { Controller, useForm } from 'react-hook-form';
 
 const page = () => {
     const params = useParams();
@@ -12,28 +13,36 @@ const page = () => {
 
     const user_id = params.user_id;
 
-    const [fullName, setFullName] = useState("");
-    const [phoneNo, setPhoneNo] = useState("");
-    const [email, setEmail] = useState("");
-    const [isAdmin, setIsAdmin] = useState(false);
+    const { register, control, handleSubmit, reset, formState: { errors } } = useForm({
+        defaultValues: {
+            fullName: "",
+            phoneNo: "",
+            email: "",
+            isAdmin: false
+        }
+    })
 
     const [alertOpen, setAlertOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [loaderOpen, setLoaderOpen] = useState(false);
 
     useEffect(() => {
         api.get(`/user-details-list/${user_id}`).then((res) => {
-            setFullName(res?.data?.full_name);
-            setPhoneNo(res?.data?.phone_no);
-            setEmail(res?.data?.email);
-            setIsAdmin(res?.data?.is_admin.toLowerCase() === 'true');
+            reset({
+                fullName: res?.data?.full_name,
+                phoneNo: res?.data?.phone_no,
+                email: res?.data?.email,
+                isAdmin: res?.data?.is_admin?.toLowerCase() === 'true'
+            })
         })
             .catch((err) => {
                 setAlertOpen(true);
                 setMessage(err?.response?.data?.message);
                 setSeverity("error");
             })
-    }, [])
+    }, [reset])
 
     const isValid = () => {
         if (phoneNo.length !== 10)
@@ -48,44 +57,44 @@ const page = () => {
         return { "status": true, "errorMessage": "" }
     }
 
-    const handleEdit = () => {
-        const { status, errorMessage } = isValid();
-        if (status) {
-            api.put("/edit-user", {
-                user_to_be_edited: user_id,
-                edit_metadata: {
-                    full_name: fullName,
-                    phone_no: phoneNo,
-                    is_admin: isAdmin,
-                    email: email
-                }
+    const onSubmit = (data) => {
+        setLoaderOpen(true);
+        setIsDisabled(true);
+        api.put("/edit-user", {
+            user_to_be_edited: user_id,
+            edit_metadata: {
+                full_name: data?.fullName,
+                phone_no: data?.phoneNo,
+                is_admin: data?.isAdmin,
+                email: data?.email
+            }
+        })
+            .then((res) => {
+                setLoaderOpen(false);
+                setAlertOpen(true);
+                setMessage(res?.data?.message);
+                setSeverity("success");
+                setTimeout(() => router.back(), 3000);
             })
-                .then((res) => {
-                    setAlertOpen(true);
-                    setMessage(res?.data?.message);
-                    setSeverity("success");
-                    setTimeout(() => router.back(), 3000);
-                })
-                .catch((err) => {
-                    setAlertOpen(true);
-                    setMessage(err?.response?.data?.message);
-                    setSeverity("error");
-                })
-        }
-        else {
-            setAlertOpen(true);
-            setMessage(errorMessage);
-            setSeverity("error");
-        }
+            .catch((err) => {
+                setLoaderOpen(false);
+                setIsDisabled(false);
+                setAlertOpen(true);
+                setMessage(err?.response?.data?.message);
+                setSeverity("error");
+            })
     }
 
     const handleDelete = () => {
+        setLoaderOpen(true);
+        setIsDisabled(true);
         api.delete("/delete-user", {
             data: {
                 user_to_be_deleted: user_id
             }
         })
             .then((res) => {
+                setLoaderOpen(false);
                 setAlertOpen(true);
                 setMessage(res?.data?.message);
                 setSeverity("success");
@@ -98,6 +107,7 @@ const page = () => {
                 }
             })
             .catch((err) => {
+                setIsDisabled(false);
                 setAlertOpen(true);
                 setSeverity("error");
                 setMessage(err?.response?.data?.message);
@@ -106,6 +116,13 @@ const page = () => {
 
     return (
         <>
+            <Backdrop
+                sx={(theme) => ({ color: 'primary.main', zIndex: theme.zIndex.drawer + 1 })}
+                open={loaderOpen}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
             <Snackbar
                 open={alertOpen}
                 autoHideDuration={3000}
@@ -121,40 +138,66 @@ const page = () => {
                 </Alert>
             </Snackbar>
             <Box className={styles.main_container} sx={{ backgroundColor: "background", color: "textColor" }}>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>Edit User</Typography>
 
-                <Box className={styles.details_container} sx={{ backgroundColor: "secondaryBackground" }}>
-                    <Box>
-                        <Typography sx={{ fontWeight: "bold" }}>Fullname</Typography>
-                        <TextField sx={{ width: "100%" }} size='small' value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Box className={styles.header}>
+                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>Edit User</Typography>
+                        <Box className={styles.btn_container}>
+                            <Button variant="contained" sx={{ backgroundColor: "error.main", fontWeight: "bold" }} onClick={handleDelete} disabled={isDisabled}>
+                                <Delete />
+                                Delete
+                            </Button>
+
+                            <Button type="submit" variant="contained" sx={{ backgroundColor: "primary.main", fontWeight: "bold" }} disabled={isDisabled}>
+                                <Save />
+                                Submit
+                            </Button>
+                        </Box>
                     </Box>
 
-                    <Box>
-                        <Typography sx={{ fontWeight: "bold" }}>Phone No.</Typography>
-                        <TextField sx={{ width: "100%" }} size='small' value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
+                    <Box className={styles.details_container} sx={{ backgroundColor: "secondaryBackground" }}>
+                        <Box>
+                            <Typography sx={{ fontWeight: "bold" }}>Fullname</Typography>
+                            <TextField
+                                sx={{ width: "100%" }}
+                                size='small'
+                                {...register("fullName", { required: "Full Name is required" })}
+                                error={errors?.fullName}
+                                helperText={errors?.fullName?.message}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography sx={{ fontWeight: "bold" }}>Phone No.</Typography>
+                            <TextField
+                                sx={{ width: "100%" }}
+                                size='small'
+                                {...register("phoneNo", { required: "Phone number is required", length: { value: 10, message: "Invalid phone number" } })}
+                                error={errors?.phoneNo}
+                                helperText={errors?.phoneNo?.message}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography sx={{ fontWeight: "bold" }}>Email</Typography>
+                            <TextField
+                                sx={{ width: "100%" }}
+                                size='small'
+                                {...register("email", { required: "Email is required", pattern: { value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, message: "Invalid email" } })}
+                                error={errors?.email}
+                                helperText={errors?.email?.message}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography sx={{ fontWeight: "bold" }}>Is Admin?</Typography>
+                            <Controller
+                                name="isAdmin"
+                                control={control}
+                                render={({ field }) => (
+                                    <Switch checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />
+                                )}
+                            />
+                        </Box>
                     </Box>
-
-                    <Box>
-                        <Typography sx={{ fontWeight: "bold" }}>Email</Typography>
-                        <TextField sx={{ width: "100%" }} size='small' value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </Box>
-
-                    <Box>
-                        <Typography sx={{ fontWeight: "bold" }}>Is Admin?</Typography>
-                        <Switch checked={isAdmin} onChange={() => setIsAdmin(!isAdmin)} />
-                    </Box>
-                </Box>
-
-                <Box className={styles.btn_container}>
-                    <Button variant="contained" sx={{ backgroundColor: "primary.main", fontWeight: "bold" }} onClick={handleEdit}>
-                        <Save />
-                        Save
-                    </Button>
-                    <Button variant="contained" sx={{ backgroundColor: "error.main", fontWeight: "bold" }} onClick={handleDelete}>
-                        <Delete />
-                        Delete
-                    </Button>
-                </Box>
+                </form>
             </Box>
         </>
     )

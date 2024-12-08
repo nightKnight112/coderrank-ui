@@ -11,6 +11,11 @@
     justify-content: space-between;
 }
 
+.btn_container {
+    display: flex;
+    gap: 10px;
+}
+
 .form_container {
     margin-top: 20px;
     display: flex;

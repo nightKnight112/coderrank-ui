@@ -1,15 +1,17 @@
 "use client";
 import { Alert, Backdrop, Box, Button, CircularProgress, MenuItem, Select, Snackbar, Switch, TextField, Tooltip, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import styles from "./page.module.css";
 import { Add, Delete, Info, Save } from "@mui/icons-material";
 import { api } from "@/utils/apiFile";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const page = () => {
 
+    const params = useParams();
     const router = useRouter();
+    const problemStatementId = params.problem_statement_id;
 
     const [alertOpen, setAlertOpen] = useState(false);
     const [message, setMessage] = useState("");
@@ -17,7 +19,7 @@ const page = () => {
     const [loaderOpen, setLoaderOpen] = useState(false);
     const [isDisabled, setIsDisabled] = useState(false);
 
-    const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    const { register, control, handleSubmit, reset, setValue, formState: { errors } } = useForm({
         defaultValues: {
             title: "",
             body: "",
@@ -25,7 +27,7 @@ const page = () => {
             tags: "",
             difficulty: "Easy",
             testCases: [
-                { input: "", expectedOutput: "", testCaseWeightage: 1, isHidden: false },
+                { testCaseId: "", input: "", expectedOutput: "", testCaseWeightage: 1, isHidden: false },
             ]
         },
     });
@@ -35,28 +37,53 @@ const page = () => {
         name: "testCases",
     });
 
+    useEffect(() => {
+        api.get(`/get-problem-details/${problemStatementId}`).then((res) => {
+            reset({
+                title: res?.data?.problem_statement_title,
+                body: res?.data?.problem_statement_body,
+                duration: res?.data?.problem_statement_duration,
+                tags: res?.data?.problem_statement_tags,
+                difficulty: res?.data?.problem_statement_difficulty,
+                testCases: res?.data?.test_cases?.map((r, i) => {
+                    return {
+                        testCaseId: r?.test_case_id,
+                        input: r?.input,
+                        expectedOutput: r?.expected_output,
+                        testCaseWeightage: r?.test_case_weightage,
+                        isHidden: r?.is_hidden
+                    }
+                })
+            })
+        })
+    }, [])
+
     const onSubmit = (data) => {
         setLoaderOpen(true);
         setIsDisabled(true);
         let reqBody = {
-            "problem_statement_title": data.title,
-            "problem_statement_body": data.body,
-            "problem_statement_duration": data.duration,
-            "problem_statement_difficulty": data.difficulty,
-            "problem_statement_tags": data.tags,
-            "test_cases": data.testCases.map((r, i) => {
-                return {
-                    "input": r.input,
-                    "expected_output": r.expectedOutput,
-                    "test_case_weightage": r.testCaseWeightage,
-                    "is_hidden": r.isHidden
-                }
-            })
+            "problem_to_be_edited": problemStatementId,
+            "edit_metadata": {
+                "problem_statement_title": data.title,
+                "problem_statement_body": data.body,
+                "problem_statement_duration": data.duration,
+                "problem_statement_difficulty": data.difficulty,
+                "problem_statement_tags": data.tags,
+                "test_cases": data.testCases.map((r, i) => {
+                    return {
+                        "test_case_id": r.testCaseId,
+                        "input": r.input,
+                        "expected_output": r.expectedOutput,
+                        "test_case_weightage": r.testCaseWeightage,
+                        "is_hidden": r.isHidden
+                    }
+                })
+            }
         }
 
-        api.post("/add-problem", reqBody).then((res) => {
+        api.put("/edit-problem", reqBody).then((res) => {
             setAlertOpen(true);
-            setMessage("Problem statement added successfully");
+            setMessage("Problem statement edited successfully");
             setSeverity("success");
             setLoaderOpen(false);
             setTimeout(() => router.back(), 3000);
@@ -66,9 +93,50 @@ const page = () => {
                 setMessage(err?.response?.data?.message || "Something went wrong");
                 setSeverity("error");
                 setLoaderOpen(false);
-                setIsDisabled(false);
             })
     };
+
+    const handleDelete = () => {
+        setLoaderOpen(true);
+        setIsDisabled(true);
+        api.delete("/delete-problem", {
+            data: {
+                "requested_problem_id": problemStatementId
+            }
+        })
+            .then((res) => {
+                setAlertOpen(true);
+                setMessage("Problem statement deleted successfully");
+                setSeverity("success");
+                setLoaderOpen(false);
+                setTimeout(() => router.back(), 3000);
+            })
+            .catch((err) => {
+                setAlertOpen(true);
+                setMessage(err?.response?.data?.message || "Something went wrong");
+                setSeverity("error");
+                setLoaderOpen(false);
+                setIsDisabled(false);
+            })
+    }
+
+    const handleDeleteTestCase = (testCaseId, index) => {
+        api.delete("/delete-test-case", {
+            data: {
+                "test_case_id": testCaseId
+            }
+        }).then((res) => {
+            setAlertOpen(true);
+            setMessage("Problem statement edited successfully");
+            setSeverity("success");
+            remove(index);
+        })
+            .catch((err) => {
+                setAlertOpen(true);
+                setMessage(err?.response?.data?.message || "Something went wrong");
+                setSeverity("error");
+            })
+    }
 
     return (
         <>
@@ -100,11 +168,18 @@ const page = () => {
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <Box className={styles.header}>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>Add Problem Statement</Typography>
-                        <Button type="submit" sx={{ fontWeight: "bold" }} variant="contained" disabled={isDisabled}>
-                            <Save />
-                            Save
-                        </Button>
+                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>Edit Problem Statement</Typography>
+
+                        <Box className={styles.btn_container}>
+                            <Button sx={{ fontWeight: "bold", backgroundColor: "error.main" }} variant="contained" disabled={isDisabled} onClick={handleDelete}>
+                                <Delete />
+                                Delete
+                            </Button>
+                            <Button type="submit" sx={{ fontWeight: "bold" }} variant="contained" disabled={isDisabled}>
+                                <Save />
+                                Save
+                            </Button>
+                        </Box>
                     </Box>
 
                     <Box className={styles.form_container} sx={{ backgroundColor: "secondaryBackground" }}>
@@ -196,7 +271,7 @@ const page = () => {
                             < React.Fragment key={field.id} >
                                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                                     <Typography sx={{ fontWeight: "bold" }} variant="h6">Test Case {index + 1}</Typography>
-                                    <Button onClick={() => remove(index)} variant="contained" color="error" disabled={fields.length === 1}>
+                                    <Button onClick={() => handleDeleteTestCase(field.testCaseId, index)} variant="contained" color="error" disabled={fields.length === 1}>
                                         <Delete />
                                     </Button>
                                 </Box>
@@ -260,6 +335,7 @@ const page = () => {
                             <Button
                                 onClick={() =>
                                     append({
+                                        testCaseId: "",
                                         input: "",
                                         expectedOutput: "",
                                         testCaseWeightage: 1,
