@@ -11,12 +11,21 @@ export const api = axios.create({
     withCredentials: true
 });
 
+api.interceptors.request.use(config => {
+    const token = Cookies.get("accessToken");
+    if (token)
+        config.headers.Authorization = `Bearer ${token}`;
+
+    return config;
+})
+
 api.interceptors.response.use(response => response, async (error) => {
     const originalRequest = error.config;
     if (error?.response?.status === 401 && !originalRequest._retry && originalRequest.url !== "/renew-token") {
         originalRequest._retry = true;
         try {
             const res = await api.post("/renew-token")
+            Cookies.set("accessToken", res?.data?.access_token, { expires: 1 / 48 });
             api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
             originalRequest.headers.Authorization = `Bearer ${res?.data?.access_token}`;
             return api(originalRequest);

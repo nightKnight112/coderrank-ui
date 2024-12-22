@@ -24,13 +24,13 @@ const Login = ({ setIsLogin, setIsError, setOpen, setMessage }) => {
         axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login-user`, reqBody, {
             withCredentials: true
         }).then((res) => {
-            api.defaults.headers.common["Authorization"] = `Bearer ${res?.data?.access_token}`;
+            Cookies.set("accessToken", res?.data?.access_token, { expires: 1 / 48 });
             Cookies.set("isLoggedIn", "true", { expires: 1 / 48 });
 
             if (res?.data?.admin_user)
                 router.push("/home/admin")
             else
-                router.push("/home/code");
+                router.push("/home");
         })
             .catch((err) => {
                 setMessage(err?.response?.data?.message);

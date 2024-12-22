@@ -8,14 +8,14 @@ import Cookies from 'js-cookie';
 
 const page = () => {
     const router = useRouter()
-    
+
     const handleLoginClick = () => {
-    	if (Cookies.get("isLoggedIn"))
-            router.push("/home/code");
+        if (Cookies.get("isLoggedIn"))
+            router.push("/home");
         else
-        	router.push("/auth");
+            router.push("/auth");
     }
-    
+
     return (
         <>
             <Box className={styles.container}>
@@ -38,7 +38,7 @@ const page = () => {
                         </Typography>
 
                         <Box className={styles.btn_container}>
-                            <Button variant="contained" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={() => router.push("/home/code")}>Try Now</Button>
+                            <Button variant="contained" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={() => router.push("/home")}>Try Now</Button>
                             <Button variant="contained" color="success" sx={{ fontSize: '20px', height: "48px", fontWeight: "bold" }} onClick={handleLoginClick}>Login</Button>
                         </Box>
                     </Box>

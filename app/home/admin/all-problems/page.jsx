@@ -21,11 +21,7 @@ const page = () => {
     const createData = ({ problem_statement_uuid, problem_statement_title, problem_statement_tags, problem_statement_difficulty }) => {
         return {
             problem_statement_title,
-            problem_statement_tags: problem_statement_tags?.split(',')?.map((r, i) => {
-                return (
-                    <Chip label={r} />
-                )
-            }),
+            problem_statement_tags,
             problem_statement_difficulty,
             actions: (
                 <>

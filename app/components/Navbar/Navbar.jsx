@@ -72,10 +72,12 @@ const Navbar = () => {
     const logout = () => {
         api.post("/logout").then((res) => {
             Cookies.remove("isLoggedIn");
+            Cookies.remove("accessToken");
             router.push("/");
         })
             .catch((err) => {
                 Cookies.remove("isLoggedIn");
+                Cookies.remove("accessToken");
                 router.push("/");
             })
     }

@@ -18,11 +18,15 @@ export const CustomThemeProvider = ({ children }) => {
             background: "#fafafa",
             secondaryBackground: "#efefef",
             textColor: "#111111",
+
             primary: {
                 main: "#1a5fb4",
             },
             success: {
                 main: '#26a269',
+            },
+            warning: {
+                main: '#e66100'
             },
             error: {
                 main: "#c01c28"
@@ -43,10 +47,13 @@ export const CustomThemeProvider = ({ children }) => {
             secondaryBackground: "#303030",
             textColor: "#eeeeee",
             primary: {
-                main: "#1a5fb4",
+                main: "#66a1d1",
             },
             success: {
                 main: "#26a269",
+            },
+            warning: {
+                main: '#e66100'
             },
             error: {
                 main: "#c01c28"

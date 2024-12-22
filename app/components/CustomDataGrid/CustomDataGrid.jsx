@@ -128,7 +128,7 @@ const CustomDataGrid = ({ data, columns, rowsPerPage = 5 }) => {
                         <TableRow>
                             {columns?.map((r, i) => {
                                 return (
-                                    <TableCell key={i} sx={{ color: "white", fontWeight: "bold", fontSize: "18px" }}>{r}</TableCell>
+                                    <TableCell key={i} sx={{ color: "white", fontWeight: "bold", fontSize: "16px", whiteSpace: "nowrap" }}>{r}</TableCell>
                                 )
                             })}
                         </TableRow>
@@ -141,7 +141,7 @@ const CustomDataGrid = ({ data, columns, rowsPerPage = 5 }) => {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: i % 2 === 0 ? "background" : "secondaryBackground" }}
                             >
                                 {Object.keys(row)?.map((x, j) => (
-                                    <TableCell key={j}>{row[x]}</TableCell>
+                                    <TableCell sx={{ fontSize: "16px", whiteSpace: "nowrap" }} key={j}>{row[x]}</TableCell>
                                 ))}
                             </TableRow>
                         ))}

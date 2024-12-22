@@ -179,7 +179,7 @@ const page = () => {
                         <Box>
                             <Box sx={{ display: "flex", gap: "5px" }}>
                                 <Typography sx={{ fontWeight: "bold" }}>Tags</Typography>
-                                <Tooltip title="Type tags separated by commas without any spaces. For eg. Arrays,Queue,Recursion" placement="right" arrow>
+                                <Tooltip title="Type tags separated by commas and spaces" placement="right" arrow>
                                     <Info />
                                 </Tooltip>
                             </Box>
