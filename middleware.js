@@ -23,9 +23,12 @@ export async function middleware(request) {
     else {
         if (request.nextUrl.pathname.startsWith("/home")) {
             let response = NextResponse.next();
+            console.log('entered else block');
+            
             if (!request.cookies.get("isLoggedIn") && !request.cookies.get("guest_id")) {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/generate-guest-id`)
                 const data = await res.json();
+                console.log(data, res, res.status);
                 response.cookies.set("guest_id", data?.guest_id);
             }
             return response;
