@@ -17,7 +17,7 @@ export async function handleClientRequest() {
                 return;
             }
 
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_PRIVATE_URL}/verify-admin`, {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/verify-admin`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -40,7 +40,7 @@ export async function handleClientRequest() {
 
             if (!isLoggedIn && !guestId) {
                 console.log("No user session found, generating guest ID");
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_PRIVATE_URL}/generate-guest-id`);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/generate-guest-id`);
                 console.log("Guest ID generation response:", res);
 
                 if (res.status === 200 && res.data?.guest_id) {
