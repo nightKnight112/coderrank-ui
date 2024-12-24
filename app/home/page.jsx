@@ -6,6 +6,7 @@ import CustomDataGrid from '../components/CustomDataGrid/CustomDataGrid';
 import { api } from '@/utils/apiFile';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
+import { handleClientRequest } from '@/utils/routeProtection';
 
 const page = () => {
 
@@ -13,6 +14,8 @@ const page = () => {
     const [alertOpen, setAlertOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
+
+    handleClientRequest();
 
 
     const columns = ["Title", "Difficulty", "Tags"];
