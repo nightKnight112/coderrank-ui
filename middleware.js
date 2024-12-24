@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 export async function middleware(request) {
     if (request.nextUrl.pathname.startsWith("/home/admin")) {
         console.log("Cookies: ", request.cookies.get("accessToken"));
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/verify-admin`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_PRIVATE_URL}/verify-admin`, {
             headers: {
                 "Authorization": `Bearer ${request.cookies.get("accessToken")["value"]}`
             }
@@ -24,9 +24,9 @@ export async function middleware(request) {
         if (request.nextUrl.pathname.startsWith("/home")) {
             let response = NextResponse.next();
             console.log('entered else block');
-            
+            console.log(!request.cookies.get("isLoggedIn") && !request.cookies.get("guest_id"))
             if (!request.cookies.get("isLoggedIn") && !request.cookies.get("guest_id")) {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/generate-guest-id`)
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_PRIVATE_URL}/generate-guest-id`)
                 const data = await res.json();
                 console.log(data, res, res.status);
                 response.cookies.set("guest_id", data?.guest_id);
